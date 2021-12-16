@@ -1,15 +1,20 @@
 package ru.learnup.javaqa.api.product;
 
+import com.github.javafaker.Faker;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import ru.learnup.javaqa.api.dto.CategoryTitle;
 import ru.learnup.javaqa.api.dto.Product;
+import ru.learnup.javaqa.api.dto.ProductWithoutPrice;
+import ru.learnup.javaqa.api.dto.ProductWithoutTitle;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
 import static io.restassured.RestAssured.given;
+import static ru.learnup.javaqa.api.enums.CategoryType.FOOD;
 
 public class ProductPostTestsWithoutCreating {
 
@@ -17,6 +22,8 @@ public class ProductPostTestsWithoutCreating {
 
     static final String propertiesFile = "src/test/resources/application.properties";
     static final String PRODUCT_ENDPOINT = "/products";
+
+    static final Faker faker = new Faker();
 
     static Product product;
 
@@ -26,19 +33,19 @@ public class ProductPostTestsWithoutCreating {
         RestAssured.baseURI = properties.getProperty("baseURL");
 
         product = Product.builder()
-                .title("Burger")
+                .title(faker.food().dish())
                 .price(500)
-                .categoryTitle("Food")
+                .categoryTitle(FOOD.getName())
                 .build();
     }
 
     @Test
     void postExistingProductId() {
 
-        product.setId(1);
+        product.setId(FOOD.getId());
 
         given()
-                .body(product.toString())
+                .body(product)
                 .header("Content-Type", "application/json")
                 .when()
                 .post(PRODUCT_ENDPOINT)
@@ -63,7 +70,7 @@ public class ProductPostTestsWithoutCreating {
         product.setId(1010101);
 
         given()
-                .body(product.toString())
+                .body(product)
                 .header("Content-Type", "application/json")
                 .when()
                 .post(PRODUCT_ENDPOINT)
@@ -77,7 +84,7 @@ public class ProductPostTestsWithoutCreating {
         product.setCategoryTitle("Problem");
 
         given()
-                .body(product.toString())
+                .body(product)
                 .header("Content-Type", "application/json")
                 .when()
                 .post(PRODUCT_ENDPOINT)
@@ -92,7 +99,7 @@ public class ProductPostTestsWithoutCreating {
         product.setCategoryTitle(null);
 
         given()
-                .body(product.toString())
+                .body(product)
                 .header("Content-Type", "application/json")
                 .when()
                 .post(PRODUCT_ENDPOINT)
@@ -107,7 +114,7 @@ public class ProductPostTestsWithoutCreating {
         product.setCategoryTitle("");
 
         given()
-                .body(product.toString())
+                .body(product)
                 .header("Content-Type", "application/json")
                 .when()
                 .post(PRODUCT_ENDPOINT)
@@ -122,7 +129,7 @@ public class ProductPostTestsWithoutCreating {
         product.setTitle(null);
 
         given()
-                .body(product.toString())
+                .body(product)
                 .header("Content-Type", "application/json")
                 .when()
                 .post(PRODUCT_ENDPOINT)
@@ -136,7 +143,7 @@ public class ProductPostTestsWithoutCreating {
         product.setTitle("");
 
         given()
-                .body(product.toString())
+                .body(product)
                 .header("Content-Type", "application/json")
                 .when()
                 .post(PRODUCT_ENDPOINT)
@@ -150,7 +157,7 @@ public class ProductPostTestsWithoutCreating {
         product.setPrice(-500);
 
         given()
-                .body(product.toString())
+                .body(product)
                 .header("Content-Type", "application/json")
                 .when()
                 .post(PRODUCT_ENDPOINT)
@@ -164,7 +171,7 @@ public class ProductPostTestsWithoutCreating {
         product.setTitle(6000);
 
         given()
-                .body(product.toString())
+                .body(product)
                 .header("Content-Type", "application/json")
                 .when()
                 .post(PRODUCT_ENDPOINT)
@@ -175,7 +182,7 @@ public class ProductPostTestsWithoutCreating {
     @Test
     void postWithoutFieldProductPrice() {
         given()
-                .body(product.toStringWithoutPrice())
+                .body(new ProductWithoutPrice(product))
                 .header("Content-Type", "application/json")
                 .when()
                 .post(PRODUCT_ENDPOINT)
@@ -186,7 +193,7 @@ public class ProductPostTestsWithoutCreating {
     @Test
     void postWithoutFieldProductTitle() {
         given()
-                .body(product.toStringWithoutTitle())
+                .body(new ProductWithoutTitle(product))
                 .header("Content-Type", "application/json")
                 .when()
                 .post(PRODUCT_ENDPOINT)
@@ -197,7 +204,7 @@ public class ProductPostTestsWithoutCreating {
     @Test
     void postOnlyFieldProductCategoryTitle() {
         given()
-                .body(product.toStringOnlyCategoryTitle())
+                .body(new CategoryTitle(product))
                 .header("Content-Type", "application/json")
                 .when()
                 .post(PRODUCT_ENDPOINT)
@@ -212,7 +219,7 @@ public class ProductPostTestsWithoutCreating {
 
 
         given()
-                .body(product.toString())
+                .body(product)
                 .header("Content-Type", "application/json")
                 .when()
                 .post(PRODUCT_ENDPOINT)

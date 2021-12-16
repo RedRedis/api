@@ -1,16 +1,21 @@
 package ru.learnup.javaqa.api.category;
 
 import io.restassured.RestAssured;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
+import ru.learnup.javaqa.api.dto.Category;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static ru.learnup.javaqa.api.enums.CategoryType.FOOD;
 
 public class CategoryGetTests {
 
@@ -46,5 +51,20 @@ public class CategoryGetTests {
                 .get(CATEGORY_ENDPOINT, id)
                 .then()
                 .statusCode(404);
+    }
+
+    @Test
+    void getCheckCategoryProductTest () {
+        Category response = given()
+                .expect()
+                .statusCode(200)
+                .when()
+                .get(CATEGORY_ENDPOINT, FOOD.getId())
+                .body()
+                .as(Category.class);
+
+        response.getProducts().forEach(p -> assertEquals(p.getCategoryTitle(), FOOD.getName()));
+        assertEquals(response.getTitle(), FOOD.getName());
+        assertEquals(response.getId(), FOOD.getId());
     }
 }

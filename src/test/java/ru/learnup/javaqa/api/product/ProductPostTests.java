@@ -1,10 +1,12 @@
 package ru.learnup.javaqa.api.product;
 
+import com.github.javafaker.Faker;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.learnup.javaqa.api.dto.Product;
+import ru.learnup.javaqa.api.dto.ProductWithoutId;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,6 +15,7 @@ import java.util.Properties;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static ru.learnup.javaqa.api.enums.CategoryType.FOOD;
 
 public class ProductPostTests {
 
@@ -21,6 +24,8 @@ public class ProductPostTests {
     static final String propertiesFile = "src/test/resources/application.properties";
     static final String PRODUCT_ENDPOINT_ID = "/products/{id}";
     static final String PRODUCT_ENDPOINT = "/products";
+
+    static final Faker faker = new Faker();
 
     static Integer ID;
     static Product product;
@@ -31,16 +36,16 @@ public class ProductPostTests {
         RestAssured.baseURI = properties.getProperty("baseURL");
 
         product = Product.builder()
-                .title("Burger")
+                .title(faker.food().dish())
                 .price(500)
-                .categoryTitle("Food")
+                .categoryTitle(FOOD.getName())
                 .build();
     }
 
     @Test
     void postNullProductId() {
         ID = given()
-                .body(product.toString())
+                .body(product)
                 .header("Content-Type", "application/json")
                 .expect()
                 .statusCode(201)
@@ -53,7 +58,7 @@ public class ProductPostTests {
     @Test
     void postWithoutFieldProductId() {
         ID = given()
-                .body(product.toStringWithoutId())
+                .body(new ProductWithoutId(product))
                 .header("Content-Type", "application/json")
                 .expect()
                 .statusCode(201)
@@ -69,7 +74,7 @@ public class ProductPostTests {
         product.setPrice(0);
 
         ID = given()
-                .body(product.toString())
+                .body(product)
                 .header("Content-Type", "application/json")
                 .expect()
                 .statusCode(201)
@@ -85,7 +90,7 @@ public class ProductPostTests {
         product.setPrice(null);
 
         ID = given()
-                .body(product.toString())
+                .body(product)
                 .header("Content-Type", "application/json")
                 .expect()
                 .statusCode(201)
@@ -101,7 +106,7 @@ public class ProductPostTests {
         product.setPrice(100.456);
 
         ID = given()
-                .body(product.toString())
+                .body(product)
                 .header("Content-Type", "application/json")
                 .expect()
                 .statusCode(201)
@@ -118,7 +123,7 @@ public class ProductPostTests {
         product.setPrice(4_000_000_000L);
 
         ID = given()
-                .body(product.toString())
+                .body(product)
                 .header("Content-Type", "application/json")
                 .expect()
                 .statusCode(201)
@@ -132,16 +137,14 @@ public class ProductPostTests {
     @Test
     void postRusProductTitle() {
 
-        String rusTitle ="Хлебушек";
-
-        product.setTitle(rusTitle);
+        product.setTitle("Хлебушек");
 
         ID = given()
-                .body(product.toString())
+                .body(product)
                 .header("Content-Type", "application/json")
                 .expect()
                 .statusCode(201)
-                .body("title", equalTo(rusTitle))
+                .body("title", equalTo(product.getTitle()))
                 .when()
                 .post(PRODUCT_ENDPOINT)
                 .jsonPath()
@@ -154,7 +157,7 @@ public class ProductPostTests {
         product.setTitle("5000");
 
         ID = given()
-                .body(product.toString())
+                .body(product)
                 .header("Content-Type", "application/json")
                 .expect()
                 .statusCode(201)

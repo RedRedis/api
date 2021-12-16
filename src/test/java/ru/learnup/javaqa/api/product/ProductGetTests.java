@@ -1,5 +1,6 @@
 package ru.learnup.javaqa.api.product;
 
+import com.github.javafaker.Faker;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import java.util.Properties;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static ru.learnup.javaqa.api.enums.CategoryType.FOOD;
 
 public class ProductGetTests {
 
@@ -25,6 +27,8 @@ public class ProductGetTests {
 
     static final String productPositiveTest = "src/test/resources/productTest/getProductPositiveTest.csv";
     static final String productNegativeTest = "src/test/resources/productTest/getProductNegativeTest.csv";
+
+    static final Faker faker = new Faker();
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -66,13 +70,13 @@ public class ProductGetTests {
     @Test
     void fullCycle() {
         Product product = Product.builder()
-                .title("Burger")
+                .title(faker.food().dish())
                 .price(5000)
-                .categoryTitle("Food")
+                .categoryTitle(FOOD.getName())
                 .build();
 
         int id = given()
-                .body(product.toStringWithoutId())
+                .body(product)
                 .header("Content-Type", "application/json")
                 .expect()
                 .statusCode(201)
