@@ -7,8 +7,8 @@ import lombok.*;
 public class Product {
 
     private Integer id;
-    private String title;
-    private Integer price;
+    private Object title;
+    private Object price;
     private String categoryTitle;
 
     @Override
@@ -26,6 +26,26 @@ public class Product {
                 "\"title\":\"" + title + '\"' +
                 ", \"price\":" + price +
                 ", \"categoryTitle\":\"" + categoryTitle + '\"' +
+                '}';
+    }
+
+    public String toStringWithoutPrice() {
+        return "{" +
+                "\"title\":\"" + title + '\"' +
+                ", \"categoryTitle\":\"" + categoryTitle + '\"' +
+                '}';
+    }
+
+    public String toStringWithoutTitle() {
+        return "{" +
+                "\"price\":" + price +
+                ", \"categoryTitle\":\"" + categoryTitle + '\"' +
+                '}';
+    }
+
+    public String toStringOnlyCategoryTitle() {
+        return "{" +
+                "\"categoryTitle\":\"" + categoryTitle + '\"' +
                 '}';
     }
 

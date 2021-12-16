@@ -12,6 +12,7 @@ import java.util.Properties;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 public class ProductPostTests {
 
@@ -88,6 +89,76 @@ public class ProductPostTests {
                 .header("Content-Type", "application/json")
                 .expect()
                 .statusCode(201)
+                .when()
+                .post(PRODUCT_ENDPOINT)
+                .jsonPath()
+                .get("id");
+    }
+
+    @Test
+    void postDoubleProductPrice() {
+
+        product.setPrice(100.456);
+
+        ID = given()
+                .body(product.toString())
+                .header("Content-Type", "application/json")
+                .expect()
+                .statusCode(201)
+                .body("price", equalTo(product.getPrice()))
+                .when()
+                .post(PRODUCT_ENDPOINT)
+                .jsonPath()
+                .get("id");
+    }
+
+    @Test
+    void postHugeProductPrice() {
+
+        product.setPrice(4_000_000_000L);
+
+        ID = given()
+                .body(product.toString())
+                .header("Content-Type", "application/json")
+                .expect()
+                .statusCode(201)
+                .body("price", equalTo(product.getPrice()))
+                .when()
+                .post(PRODUCT_ENDPOINT)
+                .jsonPath()
+                .get("id");
+    }
+
+    @Test
+    void postRusProductTitle() {
+
+        String rusTitle ="Хлебушек";
+
+        product.setTitle(rusTitle);
+
+        ID = given()
+                .body(product.toString())
+                .header("Content-Type", "application/json")
+                .expect()
+                .statusCode(201)
+                .body("title", equalTo(rusTitle))
+                .when()
+                .post(PRODUCT_ENDPOINT)
+                .jsonPath()
+                .get("id");
+    }
+
+    @Test
+    void postOnlyNumberProductTitle() {
+
+        product.setTitle("5000");
+
+        ID = given()
+                .body(product.toString())
+                .header("Content-Type", "application/json")
+                .expect()
+                .statusCode(201)
+                .body("title", equalTo(product.getTitle()))
                 .when()
                 .post(PRODUCT_ENDPOINT)
                 .jsonPath()

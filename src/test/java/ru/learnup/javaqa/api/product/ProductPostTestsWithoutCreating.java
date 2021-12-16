@@ -143,4 +143,80 @@ public class ProductPostTestsWithoutCreating {
                 .then()
                 .statusCode(500);
     }
+
+    @Test
+    void postNegativeProductPrice() {
+
+        product.setPrice(-500);
+
+        given()
+                .body(product.toString())
+                .header("Content-Type", "application/json")
+                .when()
+                .post(PRODUCT_ENDPOINT)
+                .then()
+                .statusCode(500);
+    }
+
+    @Test
+    void postNumberInsteadOfStringProductTitle() {
+
+        product.setTitle(6000);
+
+        given()
+                .body(product.toString())
+                .header("Content-Type", "application/json")
+                .when()
+                .post(PRODUCT_ENDPOINT)
+                .then()
+                .statusCode(500);
+    }
+
+    @Test
+    void postWithoutFieldProductPrice() {
+        given()
+                .body(product.toStringWithoutPrice())
+                .header("Content-Type", "application/json")
+                .when()
+                .post(PRODUCT_ENDPOINT)
+                .then()
+                .statusCode(500);
+    }
+
+    @Test
+    void postWithoutFieldProductTitle() {
+        given()
+                .body(product.toStringWithoutTitle())
+                .header("Content-Type", "application/json")
+                .when()
+                .post(PRODUCT_ENDPOINT)
+                .then()
+                .statusCode(500);
+    }
+
+    @Test
+    void postOnlyFieldProductCategoryTitle() {
+        given()
+                .body(product.toStringOnlyCategoryTitle())
+                .header("Content-Type", "application/json")
+                .when()
+                .post(PRODUCT_ENDPOINT)
+                .then()
+                .statusCode(500);
+    }
+
+    @Test
+    void postStringInsteadOfNumberProductPrice() {
+
+        product.setPrice("2000000");
+
+
+        given()
+                .body(product.toString())
+                .header("Content-Type", "application/json")
+                .when()
+                .post(PRODUCT_ENDPOINT)
+                .then()
+                .statusCode(500);
+    }
 }
