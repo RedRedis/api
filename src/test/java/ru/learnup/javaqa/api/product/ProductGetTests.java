@@ -1,106 +1,72 @@
 package ru.learnup.javaqa.api.product;
 
-import com.github.javafaker.Faker;
-import io.restassured.RestAssured;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
-import ru.learnup.javaqa.api.dto.Product;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
+import ru.learnup.javaqa.api.baseTests.BaseTest;
 
 import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.when;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static ru.learnup.javaqa.api.enums.CategoryType.FOOD;
+import static ru.learnup.javaqa.api.Endpoints.PRODUCT_ENDPOINT;
+import static ru.learnup.javaqa.api.Endpoints.PRODUCT_ENDPOINT_ID;
+import static ru.learnup.javaqa.api.enums.SentProductType.FULL;
 
-public class ProductGetTests {
-
-    static final Properties properties = new Properties();
-
-    static final String propertiesFile = "src/test/resources/application.properties";
-    static final String PRODUCT_ENDPOINT_ID = "/products/{id}";
-    static final String PRODUCT_ENDPOINT = "/products";
-
-    static final String productPositiveTest = "src/test/resources/productTest/getProductPositiveTest.csv";
-    static final String productNegativeTest = "src/test/resources/productTest/getProductNegativeTest.csv";
-
-    static final Faker faker = new Faker();
-
-    @BeforeAll
-    static void setUp() throws IOException {
-        properties.load(new FileInputStream(propertiesFile));
-        RestAssured.baseURI = properties.getProperty("baseURL");
-    }
+public class ProductGetTests extends BaseTest {
 
     @Test
     void getAllProductPositiveTest() {
         given()
+                .response()
+                .spec(positiveResponseSpec)
                 .when()
-                .get(PRODUCT_ENDPOINT)
-                //.prettyPeek()
-                .then()
-                .statusCode(200);
+                .get(PRODUCT_ENDPOINT);
     }
 
     @ParameterizedTest
     @CsvFileSource(files=productPositiveTest)
     void getProductPositiveTest(int id) {
         given()
+                .response()
+                .spec(positiveResponseSpec)
                 .when()
-                .get(PRODUCT_ENDPOINT_ID, id)
-                //.prettyPeek()
-                .then()
-                .statusCode(200);
+                .get(PRODUCT_ENDPOINT_ID, id);
     }
 
     @ParameterizedTest
     @CsvFileSource(files=productNegativeTest)
     void getProductNegativeTest(int id) {
         given()
+                .response()
+                .spec(negativeResponseSpec)
                 .when()
-                .get(PRODUCT_ENDPOINT_ID, id)
-                .then()
-                .statusCode(404);
+                .get(PRODUCT_ENDPOINT_ID, id);
     }
 
     @Test
     void fullCycle() {
-        Product product = Product.builder()
-                .title(faker.food().dish())
-                .price(5000)
-                .categoryTitle(FOOD.getName())
-                .build();
 
-        int id = given()
-                .body(product)
-                .header("Content-Type", "application/json")
-                .expect()
-                .statusCode(201)
-                .when()
+        iniProduct();
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec201();
+
+        int id = given(productRequestSpec, productResponseSpec)
                 .post(PRODUCT_ENDPOINT)
                 .jsonPath()
                 .get("id");
 
         product.setId(id);
+        iniProductResponseSpec200();
 
         given()
+                .response()
+                .spec(productResponseSpec)
                 .when()
-                .get(PRODUCT_ENDPOINT_ID, id)
-                .then()
-                .statusCode(200)
-                .body("id", equalTo(product.getId()))
-                .body("title", equalTo(product.getTitle()))
-                .body("price", equalTo(product.getPrice()))
-                .body("categoryTitle", equalTo(product.getCategoryTitle()));
+                .get(PRODUCT_ENDPOINT_ID, id);
 
-        when()
-                .delete(PRODUCT_ENDPOINT_ID, product.getId())
-                .then()
-                .statusCode(200);
+        given()
+                .response()
+                .spec(deleteResponseSpec)
+                .when()
+                .delete(PRODUCT_ENDPOINT_ID, product.getId());
     }
 
 }

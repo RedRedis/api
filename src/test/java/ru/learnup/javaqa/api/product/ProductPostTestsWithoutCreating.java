@@ -1,229 +1,169 @@
 package ru.learnup.javaqa.api.product;
 
-import com.github.javafaker.Faker;
-import io.restassured.RestAssured;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import ru.learnup.javaqa.api.dto.CategoryTitle;
-import ru.learnup.javaqa.api.dto.Product;
-import ru.learnup.javaqa.api.dto.ProductWithoutPrice;
-import ru.learnup.javaqa.api.dto.ProductWithoutTitle;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+import ru.learnup.javaqa.api.baseTests.BaseTest;
 
 import static io.restassured.RestAssured.given;
-import static ru.learnup.javaqa.api.enums.CategoryType.FOOD;
+import static ru.learnup.javaqa.api.Endpoints.PRODUCT_ENDPOINT;
+import static ru.learnup.javaqa.api.enums.SentProductType.*;
 
-public class ProductPostTestsWithoutCreating {
+public class ProductPostTestsWithoutCreating extends BaseTest {
 
-    static final Properties properties = new Properties();
+    @ParameterizedTest
+    @CsvFileSource(files=productPostExistingIdTest)
+    void postExistingProductId(int id) {
 
-    static final String propertiesFile = "src/test/resources/application.properties";
-    static final String PRODUCT_ENDPOINT = "/products";
+        iniProductId(id);
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec400();
 
-    static final Faker faker = new Faker();
-
-    static Product product;
-
-    @BeforeAll
-    static void setUp() throws IOException {
-        properties.load(new FileInputStream(propertiesFile));
-        RestAssured.baseURI = properties.getProperty("baseURL");
-
-        product = Product.builder()
-                .title(faker.food().dish())
-                .price(500)
-                .categoryTitle(FOOD.getName())
-                .build();
-    }
-
-    @Test
-    void postExistingProductId() {
-
-        product.setId(FOOD.getId());
-
-        given()
-                .body(product)
-                .header("Content-Type", "application/json")
-                .when()
-                .post(PRODUCT_ENDPOINT)
-                .then()
-                .statusCode(400);
+        given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT);
     }
 
     @Test
     void postNotValidProduct() {
-        given()
-                .body("{}")
-                .header("Content-Type", "application/json")
-                .when()
-                .post(PRODUCT_ENDPOINT)
-                .then()
-                .statusCode(500);
+
+        iniProductRequestSpec();
+        iniProductResponseSpec500();
+
+        given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT);
     }
 
     @Test
     void postNoExistingProductId() {
 
-        product.setId(1010101);
+        iniProductId(1010101);
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec400();
 
-        given()
-                .body(product)
-                .header("Content-Type", "application/json")
-                .when()
-                .post(PRODUCT_ENDPOINT)
-                .then()
-                .statusCode(400);
+        given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT);
     }
 
     @Test
     void postNoExistingProductCategory() {
 
-        product.setCategoryTitle("Problem");
+        iniProductCategoryTitle("Problem");
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec500();
 
-        given()
-                .body(product)
-                .header("Content-Type", "application/json")
-                .when()
-                .post(PRODUCT_ENDPOINT)
-                //.prettyPeek()
-                .then()
-                .statusCode(500);
+        given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT);
     }
 
     @Test
     void postNullProductCategory() {
 
-        product.setCategoryTitle(null);
+        iniProductCategoryTitle(null);
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec500();
 
-        given()
-                .body(product)
-                .header("Content-Type", "application/json")
-                .when()
-                .post(PRODUCT_ENDPOINT)
-                //.prettyPeek()
-                .then()
-                .statusCode(500);
+        given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT);
     }
 
     @Test
     void postEmptyProductCategory() {
 
-        product.setCategoryTitle("");
+        iniProductCategoryTitle("");
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec500();
 
-        given()
-                .body(product)
-                .header("Content-Type", "application/json")
-                .when()
-                .post(PRODUCT_ENDPOINT)
-                //.prettyPeek()
-                .then()
-                .statusCode(500);
+        given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT);
+
     }
 
     @Test
     void postNullProductTitle() {
 
-        product.setTitle(null);
+        iniProductTitle(null);
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec500();
 
-        given()
-                .body(product)
-                .header("Content-Type", "application/json")
-                .when()
-                .post(PRODUCT_ENDPOINT)
-                .then()
-                .statusCode(500);
+        given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT);
     }
 
     @Test
     void postEmptyProductTitle() {
 
-        product.setTitle("");
+        iniProductTitle("");
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec500();
 
-        given()
-                .body(product)
-                .header("Content-Type", "application/json")
-                .when()
-                .post(PRODUCT_ENDPOINT)
-                .then()
-                .statusCode(500);
+        given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT);
+
     }
 
     @Test
     void postNegativeProductPrice() {
 
-        product.setPrice(-500);
+        iniProductPrice(-500);
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec500();
 
-        given()
-                .body(product)
-                .header("Content-Type", "application/json")
-                .when()
-                .post(PRODUCT_ENDPOINT)
-                .then()
-                .statusCode(500);
+        given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT);
     }
 
     @Test
     void postNumberInsteadOfStringProductTitle() {
 
-        product.setTitle(6000);
+        iniProductTitle(6000);
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec500();
 
-        given()
-                .body(product)
-                .header("Content-Type", "application/json")
-                .when()
-                .post(PRODUCT_ENDPOINT)
-                .then()
-                .statusCode(500);
+        given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT);
     }
 
     @Test
     void postWithoutFieldProductPrice() {
-        given()
-                .body(new ProductWithoutPrice(product))
-                .header("Content-Type", "application/json")
-                .when()
-                .post(PRODUCT_ENDPOINT)
-                .then()
-                .statusCode(500);
+
+        iniProduct();
+        iniProductRequestSpec(WITHOUT_PRICE);
+        iniProductResponseSpec500();
+
+        given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT);
     }
 
     @Test
     void postWithoutFieldProductTitle() {
-        given()
-                .body(new ProductWithoutTitle(product))
-                .header("Content-Type", "application/json")
-                .when()
-                .post(PRODUCT_ENDPOINT)
-                .then()
-                .statusCode(500);
+
+        iniProduct();
+        iniProductRequestSpec(WITHOUT_TITLE);
+        iniProductResponseSpec500();
+
+        given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT);
     }
 
     @Test
     void postOnlyFieldProductCategoryTitle() {
-        given()
-                .body(new CategoryTitle(product))
-                .header("Content-Type", "application/json")
-                .when()
-                .post(PRODUCT_ENDPOINT)
-                .then()
-                .statusCode(500);
+
+        iniProduct();
+        iniProductRequestSpec(ONLY_CATEGORY_TITLE);
+        iniProductResponseSpec500();
+
+        given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT);
     }
 
     @Test
     void postStringInsteadOfNumberProductPrice() {
 
-        product.setPrice("2000000");
+        iniProductPrice("2000000");
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec500();
 
-
-        given()
-                .body(product)
-                .header("Content-Type", "application/json")
-                .when()
-                .post(PRODUCT_ENDPOINT)
-                .then()
-                .statusCode(500);
+        given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT);
     }
 }

@@ -1,55 +1,27 @@
 package ru.learnup.javaqa.api.product;
 
-import com.github.javafaker.Faker;
-import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import ru.learnup.javaqa.api.dto.Product;
-import ru.learnup.javaqa.api.dto.ProductWithoutId;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
+import ru.learnup.javaqa.api.baseTests.BaseTest;
 
 import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.when;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static ru.learnup.javaqa.api.enums.CategoryType.FOOD;
+import static ru.learnup.javaqa.api.Endpoints.PRODUCT_ENDPOINT;
+import static ru.learnup.javaqa.api.Endpoints.PRODUCT_ENDPOINT_ID;
+import static ru.learnup.javaqa.api.enums.SentProductType.FULL;
+import static ru.learnup.javaqa.api.enums.SentProductType.WITHOUT_ID;
 
-public class ProductPostTests {
+public class ProductPostTests extends BaseTest {
 
-    static final Properties properties = new Properties();
-
-    static final String propertiesFile = "src/test/resources/application.properties";
-    static final String PRODUCT_ENDPOINT_ID = "/products/{id}";
-    static final String PRODUCT_ENDPOINT = "/products";
-
-    static final Faker faker = new Faker();
-
-    static Integer ID;
-    static Product product;
-
-    @BeforeAll
-    static void setUp() throws IOException {
-        properties.load(new FileInputStream(propertiesFile));
-        RestAssured.baseURI = properties.getProperty("baseURL");
-
-        product = Product.builder()
-                .title(faker.food().dish())
-                .price(500)
-                .categoryTitle(FOOD.getName())
-                .build();
-    }
+    private static Integer ID;
 
     @Test
     void postNullProductId() {
-        ID = given()
-                .body(product)
-                .header("Content-Type", "application/json")
-                .expect()
-                .statusCode(201)
-                .when()
+
+        iniProduct();
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec201();
+
+        ID = given(productRequestSpec, productResponseSpec)
                 .post(PRODUCT_ENDPOINT)
                 .jsonPath()
                 .get("id");
@@ -57,12 +29,12 @@ public class ProductPostTests {
 
     @Test
     void postWithoutFieldProductId() {
-        ID = given()
-                .body(new ProductWithoutId(product))
-                .header("Content-Type", "application/json")
-                .expect()
-                .statusCode(201)
-                .when()
+
+        iniProduct();
+        iniProductRequestSpec(WITHOUT_ID);
+        iniProductResponseSpec201();
+
+        ID = given(productRequestSpec, productResponseSpec)
                 .post(PRODUCT_ENDPOINT)
                 .jsonPath()
                 .get("id");
@@ -71,14 +43,11 @@ public class ProductPostTests {
     @Test
     void postZeroProductPrice() {
 
-        product.setPrice(0);
+        iniProductPrice(0);
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec201();
 
-        ID = given()
-                .body(product)
-                .header("Content-Type", "application/json")
-                .expect()
-                .statusCode(201)
-                .when()
+        ID = given(productRequestSpec, productResponseSpec)
                 .post(PRODUCT_ENDPOINT)
                 .jsonPath()
                 .get("id");
@@ -87,31 +56,25 @@ public class ProductPostTests {
     @Test
     void postNullProductPrice() {
 
-        product.setPrice(null);
+        iniProductPrice(null);
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec201();
 
-        ID = given()
-                .body(product)
-                .header("Content-Type", "application/json")
-                .expect()
-                .statusCode(201)
-                .when()
+        ID = given(productRequestSpec, productResponseSpec)
                 .post(PRODUCT_ENDPOINT)
                 .jsonPath()
                 .get("id");
     }
 
+
     @Test
     void postDoubleProductPrice() {
 
-        product.setPrice(100.456);
+        iniProductPrice(100.456);
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec201();
 
-        ID = given()
-                .body(product)
-                .header("Content-Type", "application/json")
-                .expect()
-                .statusCode(201)
-                .body("price", equalTo(product.getPrice()))
-                .when()
+        ID = given(productRequestSpec, productResponseSpec)
                 .post(PRODUCT_ENDPOINT)
                 .jsonPath()
                 .get("id");
@@ -120,15 +83,11 @@ public class ProductPostTests {
     @Test
     void postHugeProductPrice() {
 
-        product.setPrice(4_000_000_000L);
+        iniProductPrice(4_000_000_000L);
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec201();
 
-        ID = given()
-                .body(product)
-                .header("Content-Type", "application/json")
-                .expect()
-                .statusCode(201)
-                .body("price", equalTo(product.getPrice()))
-                .when()
+        ID = given(productRequestSpec, productResponseSpec)
                 .post(PRODUCT_ENDPOINT)
                 .jsonPath()
                 .get("id");
@@ -137,15 +96,11 @@ public class ProductPostTests {
     @Test
     void postRusProductTitle() {
 
-        product.setTitle("Хлебушек");
+        iniProductTitle("Хлебушек");
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec201();
 
-        ID = given()
-                .body(product)
-                .header("Content-Type", "application/json")
-                .expect()
-                .statusCode(201)
-                .body("title", equalTo(product.getTitle()))
-                .when()
+        ID = given(productRequestSpec, productResponseSpec)
                 .post(PRODUCT_ENDPOINT)
                 .jsonPath()
                 .get("id");
@@ -154,15 +109,11 @@ public class ProductPostTests {
     @Test
     void postOnlyNumberProductTitle() {
 
-        product.setTitle("5000");
+        iniProductTitle("5000");
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec201();
 
-        ID = given()
-                .body(product)
-                .header("Content-Type", "application/json")
-                .expect()
-                .statusCode(201)
-                .body("title", equalTo(product.getTitle()))
-                .when()
+        ID = given(productRequestSpec, productResponseSpec)
                 .post(PRODUCT_ENDPOINT)
                 .jsonPath()
                 .get("id");
@@ -171,9 +122,12 @@ public class ProductPostTests {
 
     @AfterEach
     void tearDown() {
-        when()
-                .delete(PRODUCT_ENDPOINT_ID, ID)
-                .then()
-                .statusCode(200);
+        if (ID != null) {
+            given()
+                    .response()
+                    .spec(deleteResponseSpec)
+                    .when()
+                    .delete(PRODUCT_ENDPOINT_ID, ID);
+        }
     }
 }
