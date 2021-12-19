@@ -7,8 +7,11 @@ import ru.learnup.javaqa.api.baseTests.BaseTest;
 import ru.learnup.javaqa.api.dto.Category;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static ru.learnup.javaqa.api.Endpoints.CATEGORY_ENDPOINT;
+import static ru.learnup.javaqa.api.asserts.IsCategoryExists.isCategoryExists;
+import static ru.learnup.javaqa.api.asserts.IsCategoryFood.isCategoryFood;
 import static ru.learnup.javaqa.api.enums.CategoryType.FOOD;
 
 public class CategoryGetTests extends BaseTest {
@@ -43,7 +46,8 @@ public class CategoryGetTests extends BaseTest {
                 .body()
                 .as(Category.class);
 
-        response.getProducts().forEach(p -> assertEquals(p.getCategoryTitle(), FOOD.getName()));
+        assertThat(response.getProducts(), isCategoryExists());
+        assertThat(response.getProducts(), isCategoryFood());
         assertEquals(response.getTitle(), FOOD.getName());
         assertEquals(response.getId(), FOOD.getId());
     }
