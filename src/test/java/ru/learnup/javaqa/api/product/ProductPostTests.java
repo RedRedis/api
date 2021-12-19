@@ -1,5 +1,6 @@
 package ru.learnup.javaqa.api.product;
 
+import io.qameta.allure.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import ru.learnup.javaqa.api.baseTests.BaseTest;
@@ -10,11 +11,16 @@ import static ru.learnup.javaqa.api.Endpoints.PRODUCT_ENDPOINT_ID;
 import static ru.learnup.javaqa.api.enums.SentProductType.FULL;
 import static ru.learnup.javaqa.api.enums.SentProductType.WITHOUT_ID;
 
+
+@Epic("Tests for products")
+@Story("Post products tests")
 public class ProductPostTests extends BaseTest {
 
     private static Integer ID;
 
     @Test
+    @Description("Создание продукта с id = null")
+    @Severity(SeverityLevel.NORMAL)
     void postNullProductId() {
 
         iniProduct();
@@ -28,6 +34,8 @@ public class ProductPostTests extends BaseTest {
     }
 
     @Test
+    @Description("Отправка json продукта без поля id")
+    @Severity(SeverityLevel.MINOR)
     void postWithoutFieldProductId() {
 
         iniProduct();
@@ -41,6 +49,8 @@ public class ProductPostTests extends BaseTest {
     }
 
     @Test
+    @Description("Создание продукта с price = 0")
+    @Severity(SeverityLevel.NORMAL)
     void postZeroProductPrice() {
 
         iniProductPrice(0);
@@ -54,6 +64,8 @@ public class ProductPostTests extends BaseTest {
     }
 
     @Test
+    @Description("Создание продукта с price = null")
+    @Severity(SeverityLevel.MINOR)
     void postNullProductPrice() {
 
         iniProductPrice(null);
@@ -68,6 +80,8 @@ public class ProductPostTests extends BaseTest {
 
 
     @Test
+    @Description("Создание продукта с дробной ценой")
+    @Severity(SeverityLevel.NORMAL)
     void postDoubleProductPrice() {
 
         iniProductPrice(100.456);
@@ -81,6 +95,8 @@ public class ProductPostTests extends BaseTest {
     }
 
     @Test
+    @Description("Создание продукта с ценой превышающий тип int")
+    @Severity(SeverityLevel.NORMAL)
     void postHugeProductPrice() {
 
         iniProductPrice(4_000_000_000L);
@@ -94,6 +110,8 @@ public class ProductPostTests extends BaseTest {
     }
 
     @Test
+    @Description("Создание продукта с русским title")
+    @Severity(SeverityLevel.NORMAL)
     void postRusProductTitle() {
 
         iniProductTitle("Хлебушек");
@@ -107,6 +125,8 @@ public class ProductPostTests extends BaseTest {
     }
 
     @Test
+    @Description("Создание продукта с title в виде цифр")
+    @Severity(SeverityLevel.TRIVIAL)
     void postOnlyNumberProductTitle() {
 
         iniProductTitle("5000");

@@ -1,5 +1,6 @@
 package ru.learnup.javaqa.api.product;
 
+import io.qameta.allure.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
@@ -9,10 +10,14 @@ import static io.restassured.RestAssured.given;
 import static ru.learnup.javaqa.api.Endpoints.PRODUCT_ENDPOINT;
 import static ru.learnup.javaqa.api.enums.SentProductType.*;
 
-public class ProductPostTestsWithoutCreating extends BaseTest {
+@Epic("Tests for products")
+@Story("Post products tests")
+public class WithoutCreatingProductPostTests extends BaseTest {
 
     @ParameterizedTest
     @CsvFileSource(files=productPostExistingIdTest)
+    @Description("Нельзя создать продукт с существующим id")
+    @Severity(SeverityLevel.CRITICAL)
     void postExistingProductId(int id) {
 
         iniProductId(id);
@@ -24,6 +29,8 @@ public class ProductPostTestsWithoutCreating extends BaseTest {
     }
 
     @Test
+    @Description("Нельзя создать продукт с невалидным json")
+    @Severity(SeverityLevel.BLOCKER)
     void postNotValidProduct() {
 
         iniProductRequestSpec();
@@ -34,6 +41,8 @@ public class ProductPostTestsWithoutCreating extends BaseTest {
     }
 
     @Test
+    @Description("Нельзя создать продукт с несуществующим id")
+    @Severity(SeverityLevel.CRITICAL)
     void postNoExistingProductId() {
 
         iniProductId(1010101);
@@ -45,6 +54,8 @@ public class ProductPostTestsWithoutCreating extends BaseTest {
     }
 
     @Test
+    @Description("Нельзя создать продукт с несуществующей категорией")
+    @Severity(SeverityLevel.CRITICAL)
     void postNoExistingProductCategory() {
 
         iniProductCategoryTitle("Problem");
@@ -56,6 +67,8 @@ public class ProductPostTestsWithoutCreating extends BaseTest {
     }
 
     @Test
+    @Description("Нельзя создать продукт с категорией = null")
+    @Severity(SeverityLevel.CRITICAL)
     void postNullProductCategory() {
 
         iniProductCategoryTitle(null);
@@ -67,6 +80,8 @@ public class ProductPostTestsWithoutCreating extends BaseTest {
     }
 
     @Test
+    @Description("Нельзя создать продукт с пустой категорией")
+    @Severity(SeverityLevel.CRITICAL)
     void postEmptyProductCategory() {
 
         iniProductCategoryTitle("");
@@ -79,6 +94,8 @@ public class ProductPostTestsWithoutCreating extends BaseTest {
     }
 
     @Test
+    @Description("Нельзя создать продукт с title = null")
+    @Severity(SeverityLevel.NORMAL)
     void postNullProductTitle() {
 
         iniProductTitle(null);
@@ -90,6 +107,8 @@ public class ProductPostTestsWithoutCreating extends BaseTest {
     }
 
     @Test
+    @Description("Нельзя создать продукт с пустым title")
+    @Severity(SeverityLevel.NORMAL)
     void postEmptyProductTitle() {
 
         iniProductTitle("");
@@ -102,6 +121,8 @@ public class ProductPostTestsWithoutCreating extends BaseTest {
     }
 
     @Test
+    @Description("Нельзя создать продукт с отрицательной ценой")
+    @Severity(SeverityLevel.CRITICAL)
     void postNegativeProductPrice() {
 
         iniProductPrice(-500);
@@ -113,6 +134,8 @@ public class ProductPostTestsWithoutCreating extends BaseTest {
     }
 
     @Test
+    @Description("Нельзя создать продукт с цифровым title вместо строкового")
+    @Severity(SeverityLevel.TRIVIAL)
     void postNumberInsteadOfStringProductTitle() {
 
         iniProductTitle(6000);
@@ -124,6 +147,8 @@ public class ProductPostTestsWithoutCreating extends BaseTest {
     }
 
     @Test
+    @Description("Нельзя создать продукт без price в json")
+    @Severity(SeverityLevel.NORMAL)
     void postWithoutFieldProductPrice() {
 
         iniProduct();
@@ -135,6 +160,8 @@ public class ProductPostTestsWithoutCreating extends BaseTest {
     }
 
     @Test
+    @Description("Нельзя создать продукт без title в json")
+    @Severity(SeverityLevel.NORMAL)
     void postWithoutFieldProductTitle() {
 
         iniProduct();
@@ -146,6 +173,8 @@ public class ProductPostTestsWithoutCreating extends BaseTest {
     }
 
     @Test
+    @Description("Нельзя создать продукт только с категорией в json")
+    @Severity(SeverityLevel.BLOCKER)
     void postOnlyFieldProductCategoryTitle() {
 
         iniProduct();
@@ -157,6 +186,8 @@ public class ProductPostTestsWithoutCreating extends BaseTest {
     }
 
     @Test
+    @Description("Нельзя создать продукт с строковым price вместо числового")
+    @Severity(SeverityLevel.TRIVIAL)
     void postStringInsteadOfNumberProductPrice() {
 
         iniProductPrice("2000000");

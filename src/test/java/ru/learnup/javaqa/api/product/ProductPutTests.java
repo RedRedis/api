@@ -1,5 +1,6 @@
 package ru.learnup.javaqa.api.product;
 
+import io.qameta.allure.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,9 @@ import static ru.learnup.javaqa.api.Endpoints.PRODUCT_ENDPOINT_ID;
 import static ru.learnup.javaqa.api.enums.CategoryType.*;
 import static ru.learnup.javaqa.api.enums.SentProductType.*;
 
+
+@Epic("Tests for products")
+@Story("Put products tests")
 public class ProductPutTests extends BaseTest {
 
     private static Integer ID;
@@ -31,6 +35,8 @@ public class ProductPutTests extends BaseTest {
 
 
     @Test
+    @Description("Можно изменить поля продукта, кроме id")
+    @Severity(SeverityLevel.CRITICAL)
     void putProductChangeTest() {
 
         iniProductId(ID);
@@ -42,6 +48,8 @@ public class ProductPutTests extends BaseTest {
     }
 
     @Test
+    @Description("Нельзя изменить несуществующий продукты")
+    @Severity(SeverityLevel.NORMAL)
     void putProductNotExistingIdTest() {
 
         iniProductId(101010101);
@@ -53,11 +61,12 @@ public class ProductPutTests extends BaseTest {
     }
 
     @Test
+    @Description("Нельзя изменить продукт без id")
+    @Severity(SeverityLevel.CRITICAL)
     void putProductNoIdTest() {
 
         iniProduct();
         iniProductRequestSpec(FULL);
-
         iniProductResponseSpec400();
 
         given(productRequestSpec, productResponseSpec)
@@ -65,6 +74,8 @@ public class ProductPutTests extends BaseTest {
     }
 
     @Test
+    @Description("Нельзя изменить продукт без id")
+    @Severity(SeverityLevel.CRITICAL)
     void putProductNullTitleTest() {
 
         iniProductTitle(null);
@@ -77,6 +88,8 @@ public class ProductPutTests extends BaseTest {
     }
 
     @Test
+    @Description("Можно изменить title продукта на пустой")
+    @Severity(SeverityLevel.MINOR)
     void putProductEmptyTitleTest() {
 
         iniProductTitle("");
@@ -89,6 +102,8 @@ public class ProductPutTests extends BaseTest {
     }
 
     @Test
+    @Description("Поле title не должно изменить, если не указать его в json")
+    @Severity(SeverityLevel.NORMAL)
     void putProductWithoutTitleTest() {
 
         iniProduct();
@@ -101,6 +116,8 @@ public class ProductPutTests extends BaseTest {
     }
 
     @Test
+    @Description("Можно изменить продукт не указав поле price")
+    @Severity(SeverityLevel.NORMAL)
     void putProductPriceNullTest() {
 
         iniProductPrice(null);
@@ -113,6 +130,8 @@ public class ProductPutTests extends BaseTest {
     }
 
     @Test
+    @Description("Можно изменить поле price")
+    @Severity(SeverityLevel.CRITICAL)
     void putProductPriceZeroTest() {
 
         iniProductPrice(0);
@@ -125,6 +144,8 @@ public class ProductPutTests extends BaseTest {
     }
 
     @Test
+    @Description("Поле price не должно изменить, если не указать его в json")
+    @Severity(SeverityLevel.NORMAL)
     void putProductNoPriceTest() {
 
         iniProduct();
@@ -137,6 +158,8 @@ public class ProductPutTests extends BaseTest {
     }
 
     @Test
+    @Description("Нельзя именить поле price на отрицательное")
+    @Severity(SeverityLevel.CRITICAL)
     void putProductNegativePriceTest() {
 
         iniProductPrice(-500);
@@ -149,6 +172,8 @@ public class ProductPutTests extends BaseTest {
     }
 
     @Test
+    @Description("Можно изменить категорию на сущестующую")
+    @Severity(SeverityLevel.NORMAL)
     void putProductChangeCategoryTest() {
 
         iniProduct();
@@ -162,6 +187,8 @@ public class ProductPutTests extends BaseTest {
     }
 
     @Test
+    @Description("Нельзя именить категории, если она не указана")
+    @Severity(SeverityLevel.CRITICAL)
     void putProductNullCategoryTest() {
 
         iniProduct();
@@ -175,6 +202,8 @@ public class ProductPutTests extends BaseTest {
     }
 
     @Test
+    @Description("Нельзя именить категории, если она не существуеты")
+    @Severity(SeverityLevel.CRITICAL)
     void putProductNotExistingCategoryTest() {
 
         iniProduct();

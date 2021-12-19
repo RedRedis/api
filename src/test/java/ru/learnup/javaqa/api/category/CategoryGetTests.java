@@ -3,6 +3,7 @@ package ru.learnup.javaqa.api.category;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
+import io.qameta.allure.*;
 import ru.learnup.javaqa.api.baseTests.BaseTest;
 import ru.learnup.javaqa.api.dto.Category;
 
@@ -14,10 +15,14 @@ import static ru.learnup.javaqa.api.asserts.IsCategoryExists.isCategoryExists;
 import static ru.learnup.javaqa.api.asserts.IsCategoryFood.isCategoryFood;
 import static ru.learnup.javaqa.api.enums.CategoryType.FOOD;
 
+@Epic("Tests for categories")
+@Story("Get categories tests")
 public class CategoryGetTests extends BaseTest {
 
     @ParameterizedTest
     @CsvFileSource(files=categoryPositiveTest)
+    @Description("Возможно получить существующие категории")
+    @Severity(SeverityLevel.BLOCKER)
     void getCategoryPositiveTest(int id) {
         given()
                 .response()
@@ -28,6 +33,8 @@ public class CategoryGetTests extends BaseTest {
 
     @ParameterizedTest
     @CsvFileSource(files=categoryNegativeTest)
+    @Description("Нельзя получить несуществующие категории")
+    @Severity(SeverityLevel.NORMAL)
     void getCategoryNegativeTest(int id) {
         given()
                 .response()
@@ -37,6 +44,8 @@ public class CategoryGetTests extends BaseTest {
     }
 
     @Test
+    @Description("Проверка соотвествия продуктов категории 'Food'")
+    @Severity(SeverityLevel.CRITICAL)
     void getCheckCategoryProductTest () {
         Category response = given()
                 .response()

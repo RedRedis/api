@@ -1,6 +1,8 @@
 package ru.learnup.javaqa.api.baseTests;
 
 import com.github.javafaker.Faker;
+import com.google.common.collect.ImmutableMap;
+import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
@@ -16,6 +18,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import static com.github.automatedowl.tools.AllureEnvironmentWriter.allureEnvironmentWriter;
 import static io.restassured.filter.log.LogDetail.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.lessThan;
@@ -49,8 +52,13 @@ public abstract class BaseTest {
 
     @BeforeAll
     protected static void setUp() throws IOException {
+
+        RestAssured.filters(new AllureRestAssured());
+
         properties.load(new FileInputStream("src/test/resources/application.properties"));
         RestAssured.baseURI = properties.getProperty("baseURL");
+
+        setAllureEnvironment();
 
         logRequestSpecification = new RequestSpecBuilder()
                 .log(METHOD)
@@ -192,5 +200,12 @@ public abstract class BaseTest {
                 .price(5000)
                 .categoryTitle(categoryTitle)
                 .build();
+    }
+
+    protected static void setAllureEnvironment() {
+        allureEnvironmentWriter(
+                ImmutableMap.<String, String>builder()
+                        .put("URL",properties.getProperty("baseURL"))
+                        .build());
     }
 }

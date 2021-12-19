@@ -3,6 +3,7 @@ package ru.learnup.javaqa.api.product;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
+import io.qameta.allure.*;
 import ru.learnup.javaqa.api.baseTests.BaseTest;
 
 import static io.restassured.RestAssured.given;
@@ -10,9 +11,13 @@ import static ru.learnup.javaqa.api.Endpoints.PRODUCT_ENDPOINT;
 import static ru.learnup.javaqa.api.Endpoints.PRODUCT_ENDPOINT_ID;
 import static ru.learnup.javaqa.api.enums.SentProductType.FULL;
 
+@Epic("Tests for products")
+@Story("Get products tests")
 public class ProductGetTests extends BaseTest {
 
     @Test
+    @Description("Возможно получить все продукты")
+    @Severity(SeverityLevel.BLOCKER)
     void getAllProductPositiveTest() {
         given()
                 .response()
@@ -23,6 +28,8 @@ public class ProductGetTests extends BaseTest {
 
     @ParameterizedTest
     @CsvFileSource(files=productPositiveTest)
+    @Description("Возможно получить продукты с существующим id")
+    @Severity(SeverityLevel.CRITICAL)
     void getProductPositiveTest(int id) {
         given()
                 .response()
@@ -33,6 +40,8 @@ public class ProductGetTests extends BaseTest {
 
     @ParameterizedTest
     @CsvFileSource(files=productNegativeTest)
+    @Description("Невозможно получить продукты с несуществующим id")
+    @Severity(SeverityLevel.NORMAL)
     void getProductNegativeTest(int id) {
         given()
                 .response()
@@ -42,6 +51,8 @@ public class ProductGetTests extends BaseTest {
     }
 
     @Test
+    @Description("Полный цикл работы с объектом: создание, получаение, удаление")
+    @Severity(SeverityLevel.CRITICAL)
     void fullCycle() {
 
         iniProduct();
