@@ -211,19 +211,5 @@ public class ProductPostTestsWithoutCreating {
                 .then()
                 .statusCode(500);
     }
-
-    @Test
-    void postStringInsteadOfNumberProductPrice() {
-
-        product.setPrice("2000000");
-
-
-        given()
-                .body(product)
-                .header("Content-Type", "application/json")
-                .when()
-                .post(PRODUCT_ENDPOINT)
-                .then()
-                .statusCode(500);
-    }
+    
 }
