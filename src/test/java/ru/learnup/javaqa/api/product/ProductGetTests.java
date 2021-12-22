@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import ru.learnup.javaqa.api.dto.Product;
+import ru.learnup.javaqa.api.enums.CategoryType;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,38 +31,44 @@ public class ProductGetTests {
 
     static final Faker faker = new Faker();
 
+    static Product product;
+
     @BeforeAll
     static void setUp() throws IOException {
         properties.load(new FileInputStream(propertiesFile));
         RestAssured.baseURI = properties.getProperty("baseURL");
+
+        product = Product.builder()
+                .title(faker.food().dish())
+                .price(5000)
+                .categoryTitle(FOOD.getName())
+                .build();
     }
 
     @Test
     void getAllProductPositiveTest() {
-        given()
-                .when()
+        when()
                 .get(PRODUCT_ENDPOINT)
-                //.prettyPeek()
                 .then()
                 .statusCode(200);
     }
 
     @ParameterizedTest
     @CsvFileSource(files=productPositiveTest)
-    void getProductPositiveTest(int id) {
-        given()
-                .when()
+    void getProductPositiveTest(int id, String title, int price, String categoryTypeName) {
+        when()
                 .get(PRODUCT_ENDPOINT_ID, id)
-                //.prettyPeek()
                 .then()
-                .statusCode(200);
+                .statusCode(200)
+                .body("title", equalTo(title))
+                .body("price", equalTo(price))
+                .body("categoryTitle", equalTo(categoryTypeName));
     }
 
     @ParameterizedTest
     @CsvFileSource(files=productNegativeTest)
     void getProductNegativeTest(int id) {
-        given()
-                .when()
+        when()
                 .get(PRODUCT_ENDPOINT_ID, id)
                 .then()
                 .statusCode(404);
@@ -69,11 +76,6 @@ public class ProductGetTests {
 
     @Test
     void fullCycle() {
-        Product product = Product.builder()
-                .title(faker.food().dish())
-                .price(5000)
-                .categoryTitle(FOOD.getName())
-                .build();
 
         int id = given()
                 .body(product)
@@ -87,8 +89,7 @@ public class ProductGetTests {
 
         product.setId(id);
 
-        given()
-                .when()
+        when()
                 .get(PRODUCT_ENDPOINT_ID, id)
                 .then()
                 .statusCode(200)
@@ -98,7 +99,7 @@ public class ProductGetTests {
                 .body("categoryTitle", equalTo(product.getCategoryTitle()));
 
         when()
-                .delete(PRODUCT_ENDPOINT_ID, product.getId())
+                .delete(PRODUCT_ENDPOINT_ID, id)
                 .then()
                 .statusCode(200);
     }
