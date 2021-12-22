@@ -157,11 +157,11 @@ public class ProductPostTestsWithoutCreating extends BaseTest {
     }
 
     @Test
-    void postStringInsteadOfNumberProductPrice() {
+    void postSymbolsProductPrice() {
 
-        iniProductPrice("2000000");
+        iniProductPrice("dsgfsd");
         iniProductRequestSpec(FULL);
-        iniProductResponseSpec500();
+        iniProductResponseSpec400();
 
         given(productRequestSpec, productResponseSpec)
                 .post(PRODUCT_ENDPOINT);

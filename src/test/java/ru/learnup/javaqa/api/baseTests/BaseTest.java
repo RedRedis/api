@@ -34,7 +34,7 @@ public abstract class BaseTest {
     protected static final String productPostExistingIdTest = "src/test/resources/productTest/postExistingProductId.csv";
 
     protected static final Faker faker = new Faker();
-    protected static Product product;
+    protected static Product product = new Product();
 
     protected static RequestSpecification logRequestSpecification;
     protected static ResponseSpecification responseSpecification;

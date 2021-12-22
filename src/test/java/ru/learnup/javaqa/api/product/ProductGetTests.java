@@ -23,12 +23,20 @@ public class ProductGetTests extends BaseTest {
 
     @ParameterizedTest
     @CsvFileSource(files=productPositiveTest)
-    void getProductPositiveTest(int id) {
+    void getProductPositiveTest(int id, String title, int price, String categoryTypeName) {
+
+        product.setTitle(title);
+        product.setPrice(price);
+        product.setCategoryTitle(categoryTypeName);
+
+        iniProductResponseSpec200();
+
         given()
                 .response()
-                .spec(positiveResponseSpec)
+                .spec(productResponseSpec)
                 .when()
                 .get(PRODUCT_ENDPOINT_ID, id);
+
     }
 
     @ParameterizedTest

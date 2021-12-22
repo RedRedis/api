@@ -119,6 +119,57 @@ public class ProductPostTests extends BaseTest {
                 .get("id");
     }
 
+    @Test
+    void postSeparatedProductPrice() {
+
+        iniProductPrice("500 000");
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec201();
+
+        ID = given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT)
+                .jsonPath()
+                .get("id");
+    }
+    @Test
+    void postSeparatedDoubleProductPrice() {
+
+        iniProductPrice("500 000,937");
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec201();
+
+        ID = given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT)
+                .jsonPath()
+                .get("id");
+    }
+
+    @Test
+    void postSeparatedProductPriceWithPoint() {
+
+        iniProductPrice("500.000");
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec201();
+
+        ID = given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT)
+                .jsonPath()
+                .get("id");
+    }
+
+    @Test
+    void postSeparatedDoubleProductPriceWithPoint() {
+
+        iniProductPrice("500.000,657");
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec201();
+
+        ID = given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT)
+                .jsonPath()
+                .get("id");
+    }
+
 
     @AfterEach
     void tearDown() {
