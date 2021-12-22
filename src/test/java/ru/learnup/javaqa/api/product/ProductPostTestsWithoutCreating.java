@@ -205,4 +205,18 @@ public class ProductPostTestsWithoutCreating {
                 .statusCode(500);
     }
 
+    @Test
+    void postSymbolsProductPrice() {
+
+        product.setPrice("dsgfsd");
+
+        given()
+                .body(product.toString())
+                .header("Content-Type", "application/json")
+                .when()
+                .post(PRODUCT_ENDPOINT)
+                .then()
+                .statusCode(400);
+    }
+
 }
