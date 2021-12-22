@@ -185,16 +185,4 @@ public class WithoutCreatingProductPostTests extends BaseTest {
                 .post(PRODUCT_ENDPOINT);
     }
 
-    @Test
-    @Description("Нельзя создать продукт с строковым price вместо числового")
-    @Severity(SeverityLevel.TRIVIAL)
-    void postStringInsteadOfNumberProductPrice() {
-
-        iniProductPrice("2000000");
-        iniProductRequestSpec(FULL);
-        iniProductResponseSpec500();
-
-        given(productRequestSpec, productResponseSpec)
-                .post(PRODUCT_ENDPOINT);
-    }
 }

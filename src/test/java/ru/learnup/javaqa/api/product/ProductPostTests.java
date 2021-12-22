@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import ru.learnup.javaqa.api.baseTests.BaseTest;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static ru.learnup.javaqa.api.Endpoints.PRODUCT_ENDPOINT;
 import static ru.learnup.javaqa.api.Endpoints.PRODUCT_ENDPOINT_ID;
 import static ru.learnup.javaqa.api.enums.SentProductType.FULL;
@@ -130,6 +131,65 @@ public class ProductPostTests extends BaseTest {
     void postOnlyNumberProductTitle() {
 
         iniProductTitle("5000");
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec201();
+
+        ID = given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT)
+                .jsonPath()
+                .get("id");
+    }
+
+    @Test
+    @Description("Создание продукта с price разделенным по разрядам пробелом")
+    @Severity(SeverityLevel.TRIVIAL)
+    void postSeparatedProductPrice() {
+
+        iniProductPrice("500 000");
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec201();
+
+        ID = given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT)
+                .jsonPath()
+                .get("id");
+    }
+    @Test
+    @Description("Создание продукта с дробным price разделенным по разрядам пробелом")
+    @Severity(SeverityLevel.TRIVIAL)
+    void postSeparatedDoubleProductPrice() {
+
+        iniProductPrice("500 000,937");
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec201();
+
+        ID = given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT)
+                .jsonPath()
+                .get("id");
+    }
+
+    @Test
+    @Description("Создание продукта с price разделенным по разрядам точкой")
+    @Severity(SeverityLevel.TRIVIAL)
+    void postSeparatedProductPriceWithPoint() {
+
+        iniProductPrice("500.000");
+        iniProductRequestSpec(FULL);
+        iniProductResponseSpec201();
+
+        ID = given(productRequestSpec, productResponseSpec)
+                .post(PRODUCT_ENDPOINT)
+                .jsonPath()
+                .get("id");
+    }
+
+    @Test
+    @Description("Создание продукта с дробным price разделенным по разрядам точкой")
+    @Severity(SeverityLevel.TRIVIAL)
+    void postSeparatedDoubleProductPriceWithPoint() {
+
+        iniProductPrice("500.000,657");
         iniProductRequestSpec(FULL);
         iniProductResponseSpec201();
 
