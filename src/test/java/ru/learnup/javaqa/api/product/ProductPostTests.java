@@ -165,6 +165,73 @@ public class ProductPostTests {
                 .get("id");
     }
 
+    @Test
+    void postSeparatedProductPrice() {
+
+        product.setPrice("500 000");
+
+        ID = given()
+                .body(product.toString())
+                .header("Content-Type", "application/json")
+                .expect()
+                .statusCode(201)
+                .body("price", equalTo(product.getPrice()))
+                .when()
+                .post(PRODUCT_ENDPOINT)
+                .jsonPath()
+                .get("id");
+    }
+    @Test
+    void postSeparatedDoubleProductPrice() {
+
+        product.setPrice("500 000,937");
+
+        ID = given()
+                .body(product.toString())
+                .header("Content-Type", "application/json")
+                .expect()
+                .statusCode(201)
+                .body("price", equalTo(product.getPrice()))
+                .when()
+                .post(PRODUCT_ENDPOINT)
+                .jsonPath()
+                .get("id");
+    }
+
+    @Test
+    void postSeparatedProductPriceWithPoint() {
+
+        product.setPrice("500.000");
+
+        ID = given()
+                .body(product.toString())
+                .header("Content-Type", "application/json")
+                .expect()
+                .statusCode(201)
+                .body("price", equalTo(product.getPrice()))
+                .when()
+                .post(PRODUCT_ENDPOINT)
+                .jsonPath()
+                .get("id");
+    }
+
+    @Test
+    void postSeparatedDoubleProductPriceWithPoint() {
+
+        product.setPrice("500.000,657");
+
+        ID = given()
+                .body(product.toString())
+                .header("Content-Type", "application/json")
+                .expect()
+                .statusCode(201)
+                .body("price", equalTo(product.getPrice()))
+                .when()
+                .post(PRODUCT_ENDPOINT)
+                .jsonPath()
+                .get("id");
+    }
+
 
     @AfterEach
     void tearDown() {
